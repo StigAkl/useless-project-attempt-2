@@ -2,8 +2,8 @@ import { Alert } from 'react-bootstrap';
 import styled from 'styled-components';
 import Button from 'react-bootstrap/Button'
 import { Session } from '../types';
-import { dateToTime } from '../helpers/utils';
-import React, { useState } from 'react';
+import { convertMsToTime, dateToTime } from '../helpers/utils';
+import React, { useEffect, useState } from 'react';
 
 const StyledDiv = styled.div`
   display: flex;
@@ -17,19 +17,40 @@ const ButtonSpacingTop = styled.p`
   margin-top: 20px;
 `;
 
+const StyledParagraph = styled.p`
+  &:empty&:after {
+    content: "";
+    display: inline-block;
+  } 
+`;
+
 interface Props {
-  session: Session | undefined;
+  session: Session;
   setSession(session: Session): void;
 }
 
 const Home = ({ session, setSession }: Props) => {
+  var diffInMs = new Date().getTime() - session.started.getTime();
 
   const [sessionSaved, setSessionSaved] = useState(false);
-  const active = session?.activeSession;
+  const [diffTime, setDiffTime] = useState<number>(diffInMs);
+
+  useEffect(() => {
+    let interval: any;
+    if (session.activeSession) {
+      interval = setInterval(() => {
+        setDiffTime(prevTime => prevTime + 1000);
+      }, 1000)
+    } else if (!session.activeSession) {
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval);
+  }, [session.activeSession]);
+
+  const active = session.activeSession;
 
   const stopSessionHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-
 
     if (session) {
       setSession({
@@ -39,6 +60,7 @@ const Home = ({ session, setSession }: Props) => {
       });
 
       setSessionSaved(true);
+      setDiffTime(0);
     }
   }
 
@@ -62,7 +84,6 @@ const Home = ({ session, setSession }: Props) => {
       "No active sessions"}</Alert.Heading>
   )
 
-
   const variant = active ? "success" : "primary";
 
   return (
@@ -78,7 +99,7 @@ const Home = ({ session, setSession }: Props) => {
             </Button>
           </ButtonSpacingTop>
 
-          {sessionSaved && 'Session saved!'}
+          <StyledParagraph>{sessionSaved ? 'Session saved!' : convertMsToTime(diffTime)}</StyledParagraph>
         </StyledDiv>
       </Alert>
     </>

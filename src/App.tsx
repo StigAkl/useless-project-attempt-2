@@ -21,14 +21,18 @@ const StyledSpinnerDiv = styled.div`
 const App = () => {
 
   const [loading, setLoading] = useState<boolean>(true);
-  const [session, setSession] = useState<Session | undefined>();
+  const [session, setSession] = useState<Session>({
+    activeSession: false,
+    started: new Date(),
+    userId: ""
+  });
 
   useEffect(() => {
     setTimeout(() => {
       const dummySession: Session = {
         userId: "18941294781",
         activeSession: true,
-        started: new Date()
+        started: new Date("2022-08-09T00:48:00.753")
       }
 
       setLoading(false);

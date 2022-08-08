@@ -5,7 +5,7 @@ export const NavBar = () => {
   return (
     <Navbar bg="dark" variant="dark">
       <Container>
-        <Navbar.Brand>Working Hours Tracker</Navbar.Brand>
+        <Navbar.Brand href="#home">Working Hours Tracker</Navbar.Brand>
       </Container>
     </Navbar >)
 }
