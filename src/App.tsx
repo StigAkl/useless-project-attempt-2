@@ -20,8 +20,8 @@ const StyledSpinnerDiv = styled.div`
 
 const App = () => {
 
-  const [loading, setLoading] = useState<boolean>(false);
-  const [session, setSesssion] = useState<Session | undefined>();
+  const [loading, setLoading] = useState<boolean>(true);
+  const [session, setSession] = useState<Session | undefined>();
 
   useEffect(() => {
     setTimeout(() => {
@@ -32,8 +32,8 @@ const App = () => {
       }
 
       setLoading(false);
-      setSesssion(dummySession);
-    })
+      setSession(dummySession);
+    }, 1000)
   }, [setLoading]);
 
   return (
@@ -41,11 +41,12 @@ const App = () => {
       <GlobalStyle />
       <NavBar />
       <Container>
-        {!loading && (<BrowserRouter>
-          <Routes>
-            <Route index element={<Home session={session} />} />
-          </Routes>
-        </BrowserRouter>)}
+        {!loading && (
+          <BrowserRouter>
+            <Routes>
+              <Route index element={<Home session={session} setSession={setSession} />} />
+            </Routes>
+          </BrowserRouter>)}
         {loading && (
           <StyledSpinnerDiv>
             <Spinner animation="border" />
