@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import Spinner from 'react-bootstrap/Spinner';
 import styled from 'styled-components';
 import { Session } from './types';
+import { subtractHours } from './helpers/utils';
 
 const StyledSpinnerDiv = styled.div`
   display: flex; 
@@ -32,7 +33,7 @@ const App = () => {
       const dummySession: Session = {
         userId: "18941294781",
         activeSession: true,
-        started: new Date("2022-08-09T00:48:00.753")
+        started: subtractHours(2, new Date())
       }
 
       setLoading(false);

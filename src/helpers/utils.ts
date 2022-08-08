@@ -29,3 +29,9 @@ export const convertMsToTime = (milliseconds: number) => {
     seconds
   )}`;
 };
+
+export const subtractHours = (numOfHours: number, date = new Date()) => {
+  date.setHours(date.getHours() - numOfHours);
+
+  return date;
+};

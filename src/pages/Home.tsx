@@ -24,6 +24,10 @@ const StyledParagraph = styled.p`
   } 
 `;
 
+const StyledWrapper = styled.div`
+  padding: 20px;
+`;
+
 interface Props {
   session: Session;
   setSession(session: Session): void;
@@ -50,30 +54,22 @@ const Home = ({ session, setSession }: Props) => {
   const active = session.activeSession;
 
   const stopSessionHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
+    setSession({
+      activeSession: false,
+      started: session?.started,
+      userId: session?.userId
+    });
 
-    if (session) {
-      setSession({
-        activeSession: false,
-        started: session?.started,
-        userId: session?.userId
-      });
-
-      setSessionSaved(true);
-      setDiffTime(0);
-    }
+    setSessionSaved(true);
+    setDiffTime(0);
   }
 
   const handleStartSession = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-
-    if (session) {
-      setSession({
-        activeSession: true,
-        started: new Date(),
-        userId: session?.userId
-      })
-    }
+    setSession({
+      activeSession: true,
+      started: new Date(),
+      userId: session.userId
+    })
 
     setSessionSaved(false);
   }
@@ -84,25 +80,23 @@ const Home = ({ session, setSession }: Props) => {
       "No active sessions"}</Alert.Heading>
   )
 
-  const variant = active ? "success" : "primary";
+  const buttonVariant = active ? "success" : "primary";
 
   return (
-    <>
-      <Alert variant={variant}>
-        <StyledDiv>
-          {heading}
-          <ButtonSpacingTop>
-            <Button variant={variant} onClick={active ?
-              stopSessionHandler :
-              handleStartSession}>
-              {active ? "Stop session" : "Start Session"}
-            </Button>
-          </ButtonSpacingTop>
+    <StyledWrapper>
+      <StyledDiv>
+        {heading}
+        <ButtonSpacingTop>
+          <Button variant={buttonVariant} onClick={active ?
+            stopSessionHandler :
+            handleStartSession}>
+            {active ? "Stop session" : "Start Session"}
+          </Button>
+        </ButtonSpacingTop>
 
-          <StyledParagraph>{sessionSaved ? 'Session saved!' : convertMsToTime(diffTime)}</StyledParagraph>
-        </StyledDiv>
-      </Alert>
-    </>
+        <StyledParagraph>{sessionSaved ? 'Session saved!' : convertMsToTime(diffTime)}</StyledParagraph>
+      </StyledDiv>
+    </StyledWrapper>
   )
 }
 
