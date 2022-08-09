@@ -10,14 +10,19 @@ import Spinner from 'react-bootstrap/Spinner';
 import styled from 'styled-components';
 import { Session } from './types';
 import { subtractHours } from './helpers/utils';
+import Login from './pages/Login';
+import { initializeApp } from 'firebase/app';
+import { firebaseConfig } from './firebase/config';
 
 const StyledSpinnerDiv = styled.div`
-  display: flex; 
-  justify-content: center;
-  height: 90vh;
-  align-items: center;
 `;
 
+const StyledContentDiv = styled.div`
+  margin-top: 10%;
+  text-align: center;
+`;
+
+initializeApp(firebaseConfig);
 
 const App = () => {
 
@@ -46,17 +51,20 @@ const App = () => {
       <GlobalStyle />
       <NavBar />
       <Container>
-        {!loading && (
-          <BrowserRouter>
-            <Routes>
-              <Route index element={<Home session={session} setSession={setSession} />} />
-            </Routes>
-          </BrowserRouter>)}
-        {loading && (
-          <StyledSpinnerDiv>
-            <Spinner animation="border" />
-          </StyledSpinnerDiv>
-        )}
+        <StyledContentDiv>
+          {!loading && (
+            <BrowserRouter>
+              <Routes>
+                <Route index element={<Home session={session} setSession={setSession} />} />
+                <Route path="/login" element={<Login />} />
+              </Routes>
+            </BrowserRouter>)}
+          {loading && (
+            <StyledSpinnerDiv>
+              <Spinner animation="border" />
+            </StyledSpinnerDiv>
+          )}
+        </StyledContentDiv>
       </Container>
     </ThemeProvider>
   );

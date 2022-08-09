@@ -73,12 +73,12 @@ const Home = ({ session, setSession }: Props) => {
           </StyledButton>
         </ButtonSpacingTop>
 
-        <p>{sessionSaved ?
+        <div>{sessionSaved ?
           `Session saved! Duration: ${convertMsToTime(Math.abs(new Date().getTime() - session.started.getTime()))}` :
           <Watch
             activeSession={session.activeSession}
             startDate={session.started} />}
-        </p>
+        </div>
       </StyledDiv>
     </div>
   )
