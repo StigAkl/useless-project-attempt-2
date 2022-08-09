@@ -3,53 +3,33 @@ import styled from 'styled-components';
 import Button from 'react-bootstrap/Button'
 import { Session } from '../types';
 import { convertMsToTime, dateToTime } from '../helpers/utils';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import Watch from '../Components/Watch';
 
 const StyledDiv = styled.div`
   display: flex;
   justify-content: center;
   text-align: center;
   flex-direction: column;
-  padding-top: 10px;
+  margin-top: 10%;
 `;
 
 const ButtonSpacingTop = styled.p`
   margin-top: 20px;
 `;
 
-const StyledParagraph = styled.p`
-  &:empty&:after {
-    content: "";
-    display: inline-block;
-  } 
+const StyledButton = styled(Button)`
+  font-size: 18px;
+  padding: 10px 50px 15px 50px;
 `;
-
-const StyledWrapper = styled.div`
-  padding: 20px;
-`;
-
 interface Props {
   session: Session;
   setSession(session: Session): void;
 }
 
 const Home = ({ session, setSession }: Props) => {
-  var diffInMs = new Date().getTime() - session.started.getTime();
 
   const [sessionSaved, setSessionSaved] = useState(false);
-  const [diffTime, setDiffTime] = useState<number>(diffInMs);
-
-  useEffect(() => {
-    let interval: any;
-    if (session.activeSession) {
-      interval = setInterval(() => {
-        setDiffTime(prevTime => prevTime + 1000);
-      }, 1000)
-    } else if (!session.activeSession) {
-      clearInterval(interval);
-    }
-    return () => clearInterval(interval);
-  }, [session.activeSession]);
 
   const active = session.activeSession;
 
@@ -61,7 +41,6 @@ const Home = ({ session, setSession }: Props) => {
     });
 
     setSessionSaved(true);
-    setDiffTime(0);
   }
 
   const handleStartSession = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -83,20 +62,25 @@ const Home = ({ session, setSession }: Props) => {
   const buttonVariant = active ? "success" : "primary";
 
   return (
-    <StyledWrapper>
+    <div>
       <StyledDiv>
         {heading}
         <ButtonSpacingTop>
-          <Button variant={buttonVariant} onClick={active ?
+          <StyledButton variant={buttonVariant} onClick={active ?
             stopSessionHandler :
             handleStartSession}>
             {active ? "Stop session" : "Start Session"}
-          </Button>
+          </StyledButton>
         </ButtonSpacingTop>
 
-        <StyledParagraph>{sessionSaved ? 'Session saved!' : convertMsToTime(diffTime)}</StyledParagraph>
+        <p>{sessionSaved ?
+          `Session saved! Duration: ${convertMsToTime(Math.abs(new Date().getTime() - session.started.getTime()))}` :
+          <Watch
+            activeSession={session.activeSession}
+            startDate={session.started} />}
+        </p>
       </StyledDiv>
-    </StyledWrapper>
+    </div>
   )
 }
 

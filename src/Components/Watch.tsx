@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
 import { convertMsToTime } from "../helpers/utils";
+import styled from 'styled-components';
 
 interface Props {
   startDate: Date;
   activeSession: boolean;
 }
 
+const StyledTimerText = styled.div`
+  font-size: 1.2rem;
+`;
 const Watch = ({ startDate, activeSession }: Props) => {
 
   var diffInMs = new Date().getTime() - startDate.getTime();
@@ -24,9 +28,8 @@ const Watch = ({ startDate, activeSession }: Props) => {
   }, [activeSession]);
 
   return (
-    <>
-      <span>{convertMsToTime(diffMs)}</span>
-    </>)
+    <StyledTimerText>{convertMsToTime(diffMs)}</StyledTimerText>
+  )
 }
 
 
