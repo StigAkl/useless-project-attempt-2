@@ -4,31 +4,31 @@ import styled from 'styled-components';
 
 interface Props {
   startDate: Date;
-  activeSession: boolean;
+  finished: boolean;
 }
 
 const StyledTimerText = styled.div`
   font-size: 1.2rem;
 `;
-const Watch = ({ startDate, activeSession }: Props) => {
+const Watch = ({ startDate, finished }: Props) => {
 
   var diffInMs = new Date().getTime() - startDate.getTime();
   const [diffMs, setDiffMs] = useState<number>(diffInMs);
 
   useEffect(() => {
     let interval: any;
-    if (activeSession) {
+    if (!finished) {
       interval = setInterval(() => {
         setDiffMs(prevTime => prevTime + 1000);
       }, 1000)
-    } else if (!activeSession) {
+    } else if (finished) {
       clearInterval(interval);
     }
     return () => clearInterval(interval);
-  }, [activeSession]);
+  }, [finished]);
 
   return (
-    <StyledTimerText>{convertMsToTime(diffMs)}</StyledTimerText>
+    !finished ? <StyledTimerText>{convertMsToTime(diffMs)}</StyledTimerText> : <div></div>
   )
 }
 

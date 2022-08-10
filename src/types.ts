@@ -1,5 +1,6 @@
 export interface Session {
-  userId: string;
-  activeSession: boolean;
-  started: Date;
+  uid: string;
+  finished: boolean;
+  startTime: Date;
+  endTime: Date | undefined;
 }

@@ -25,19 +25,21 @@ const StyledButton = styled(Button)`
 interface Props {
   session: Session;
   setSession(session: Session): void;
+  uid: string;
 }
 
-const Home = ({ session, setSession }: Props) => {
+const Home = ({ session, setSession, uid }: Props) => {
 
   const [sessionSaved, setSessionSaved] = useState(false);
 
-  const active = session.activeSession;
+  const active = !session.finished;
 
   const stopSessionHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
     setSession({
-      activeSession: false,
-      started: session?.started,
-      userId: session?.userId
+      finished: true,
+      startTime: session?.startTime,
+      endTime: undefined,
+      uid: uid
     });
 
     setSessionSaved(true);
@@ -45,9 +47,10 @@ const Home = ({ session, setSession }: Props) => {
 
   const handleStartSession = (e: React.MouseEvent<HTMLButtonElement>) => {
     setSession({
-      activeSession: true,
-      started: new Date(),
-      userId: session.userId
+      finished: false,
+      startTime: new Date(),
+      uid: session.uid,
+      endTime: undefined
     })
 
     setSessionSaved(false);
@@ -55,7 +58,7 @@ const Home = ({ session, setSession }: Props) => {
 
   const heading = (
     <Alert.Heading>{active ?
-      `Active session started at ${dateToTime(session.started)}` :
+      `Active session started at ${dateToTime(session.startTime)}` :
       "No active sessions"}</Alert.Heading>
   )
 
@@ -74,10 +77,10 @@ const Home = ({ session, setSession }: Props) => {
         </ButtonSpacingTop>
 
         <div>{sessionSaved ?
-          `Session saved! Duration: ${convertMsToTime(Math.abs(new Date().getTime() - session.started.getTime()))}` :
+          `Session saved! Duration: ${convertMsToTime(Math.abs(new Date().getTime() - session.startTime.getTime()))}` :
           <Watch
-            activeSession={session.activeSession}
-            startDate={session.started} />}
+            finished={session.finished}
+            startDate={session.startTime} />}
         </div>
       </StyledDiv>
     </div>

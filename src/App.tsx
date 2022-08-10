@@ -9,13 +9,11 @@ import { useEffect, useState } from 'react';
 import Spinner from 'react-bootstrap/Spinner';
 import styled from 'styled-components';
 import { Session } from './types';
-import { subtractHours } from './helpers/utils';
 import Login from './pages/Login';
 import { initializeApp } from 'firebase/app';
 import { firebaseConfig } from './firebase/config';
-
-const StyledSpinnerDiv = styled.div`
-`;
+import { getAuth } from "firebase/auth";
+import { getFirestore, collection, query, where, getDocs } from "firebase/firestore";
 
 const StyledContentDiv = styled.div`
   margin-top: 10%;
@@ -26,24 +24,48 @@ initializeApp(firebaseConfig);
 
 const App = () => {
 
+  const auth = getAuth();
+  const firestore = getFirestore();
+
   const [loading, setLoading] = useState<boolean>(true);
+  const [uid, setUid] = useState<string>("");
   const [session, setSession] = useState<Session>({
-    activeSession: false,
-    started: new Date(),
-    userId: ""
+    finished: true,
+    startTime: new Date(),
+    uid: "",
+    endTime: undefined
   });
 
-  useEffect(() => {
-    setTimeout(() => {
-      const dummySession: Session = {
-        userId: "18941294781",
-        activeSession: true,
-        started: subtractHours(2, new Date())
-      }
 
+  const fetchData = async (uid: string) => {
+    const q = query(collection(firestore, "sessions"), where("userId", "==", "VHwbLL869ydeJm3aMtQrwp4jSl03"), where("finished", "==", false));
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.docs.length === 1) {
+      const sessionData = querySnapshot.docs[0].data();
+
+      const sess = {
+        endTime: undefined,
+        finished: false,
+        startTime: sessionData.startTime.toDate(),
+        uid: uid
+      };
+
+      setSession(sess);
       setLoading(false);
-      setSession(dummySession);
-    }, 1000)
+    }
+  }
+
+  useEffect(() => {
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUid(user.uid);
+        fetchData(user.uid);
+      } else {
+        console.log("Not authenticated");
+      }
+    })
+
   }, [setLoading]);
 
   return (
@@ -55,14 +77,12 @@ const App = () => {
           {!loading && (
             <BrowserRouter>
               <Routes>
-                <Route index element={<Home session={session} setSession={setSession} />} />
+                <Route index element={<Home session={session} uid={uid} setSession={setSession} />} />
                 <Route path="/login" element={<Login />} />
               </Routes>
             </BrowserRouter>)}
           {loading && (
-            <StyledSpinnerDiv>
-              <Spinner animation="border" />
-            </StyledSpinnerDiv>
+            <Spinner animation="border" />
           )}
         </StyledContentDiv>
       </Container>
