@@ -35,3 +35,12 @@ export const subtractHours = (numOfHours: number, date = new Date()) => {
 
   return date;
 };
+
+export const shouldAutoStop = (date: Date) => {
+  const defaultLengthInMs = 12 * 60 * 60 * 1000; // 12 hours
+
+  const diff = new Date().getTime() - date.getTime();
+
+  console.log(diff / 1000 / 60 / 60);
+  return diff >= defaultLengthInMs;
+};

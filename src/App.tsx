@@ -14,6 +14,7 @@ import { initializeApp } from 'firebase/app';
 import { firebaseConfig } from './firebase/config';
 import { getAuth } from "firebase/auth";
 import { getFirestore, collection, query, where, getDocs } from "firebase/firestore";
+import { shouldAutoStop } from './helpers/utils';
 
 const StyledContentDiv = styled.div`
   margin-top: 10%;
@@ -50,6 +51,13 @@ const App = () => {
         startTime: sessionData.startTime.toDate(),
         uid: uid
       };
+
+      if (shouldAutoStop(sessionData.startTime.toDate())) {
+        console.log("Wow that's a long time");
+      }
+      else {
+        console.log("Not even 12 hours!");
+      }
 
       setSession(sess);
       setLoading(false);
