@@ -5,7 +5,7 @@ import { Session } from '../types';
 import { convertMsToTime, dateToTime } from '../helpers/utils';
 import React, { useState } from 'react';
 import Watch from '../Components/Watch';
-import { updateSession } from '../firebase/firebaseService';
+import { newSession, updateSession } from '../firebase/firebaseService';
 
 const StyledDiv = styled.div`
   display: flex;
@@ -21,7 +21,7 @@ const ButtonSpacingTop = styled.p`
 
 const StyledButton = styled(Button)`
   font-size: 18px;
-  padding: 10px 50px 15px 50px;
+  padding: 10px 30px 10px 30px;
 `;
 interface Props {
   session: Session;
@@ -34,9 +34,12 @@ interface Props {
 const Home = ({ session, setSession, uid }: Props) => {
 
   const [sessionSaved, setSessionSaved] = useState(false);
-  const active = !session.finished;
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [active, setActive] = useState<boolean>(!session.finished);
+  const [stoppedDuration, setStoppedDuration] = useState<string>("");
 
   const stopSessionHandler = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    setIsLoading(true);
     const saveSession = {
       finished: true,
       startTime: session?.startTime,
@@ -44,19 +47,21 @@ const Home = ({ session, setSession, uid }: Props) => {
       uid: uid
     };
 
+    const diffInMillis = convertMsToTime(Math.abs(new Date().getTime() - session.startTime.getTime()));
     await updateSession(saveSession, uid, setSession);
+    setStoppedDuration(diffInMillis);
+    setActive(false);
     setSessionSaved(true);
+    setIsLoading(false);
   }
 
-  const handleStartSession = (e: React.MouseEvent<HTMLButtonElement>) => {
-    setSession({
-      finished: false,
-      startTime: new Date(),
-      uid: session.uid,
-      endTime: undefined
-    })
-
+  const handleStartSession = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    setIsLoading(true);
+    const session = await newSession(uid);
+    setSession(session);
+    setActive(true);
     setSessionSaved(false);
+    setIsLoading(false);
   }
 
   const heading = (
@@ -66,21 +71,21 @@ const Home = ({ session, setSession, uid }: Props) => {
   )
 
   const buttonVariant = active ? "success" : "primary";
-
+  const sessionButtonText = active ? "Stop session" : "Start new session";
   return (
     <div>
       <StyledDiv>
         {heading}
         <ButtonSpacingTop>
-          <StyledButton variant={buttonVariant} onClick={active ?
+          <StyledButton disabled={isLoading} variant={buttonVariant} onClick={active ?
             stopSessionHandler :
             handleStartSession}>
-            {active ? "Stop session" : "Start Session"}
+            {sessionButtonText}
           </StyledButton>
         </ButtonSpacingTop>
 
         <div>{sessionSaved &&
-          `Session saved! Duration: ${convertMsToTime(Math.abs(new Date().getTime() - session.startTime.getTime()))}`
+          `Session saved! Duration: ${stoppedDuration}`
         }
         </div>
 

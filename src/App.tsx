@@ -72,7 +72,6 @@ const App = () => {
         setUid(user.uid);
       } else {
         setUid("");
-        console.log("Setting loading false else ")
         setLoading(false);
       }
     })
@@ -81,7 +80,7 @@ const App = () => {
   return (
     <ThemeProvider theme={defaultTheme}>
       <GlobalStyle />
-      <NavBar />
+      {uid && <NavBar uid={uid} />}
       <Container>
         <StyledContentDiv>
 

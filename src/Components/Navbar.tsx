@@ -8,7 +8,10 @@ const StyledLogoutButton = styled(Button)`
   margin-left: 20px;
 `;
 
-export const NavBar = () => {
+interface Props {
+  uid: string;
+}
+export const NavBar = ({ uid }: Props) => {
 
   const auth: any = getAuth();
 
@@ -25,7 +28,10 @@ export const NavBar = () => {
           <Nav.Link href="#home">Home</Nav.Link>
           <Nav.Link href="#logs">Logs</Nav.Link>
           <Nav.Link href="#stats">Statistics</Nav.Link>
-          <StyledLogoutButton variant="light" size="sm" onClick={() => signOutHandler()}>Sign out</StyledLogoutButton>
+          {uid &&
+            <StyledLogoutButton variant="light" size="sm" onClick={() => signOutHandler()}>
+              Sign out
+            </StyledLogoutButton>}
         </Nav>
       </Container>
     </Navbar >)

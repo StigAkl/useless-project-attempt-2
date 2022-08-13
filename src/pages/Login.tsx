@@ -5,7 +5,7 @@ import { getAuth, signInWithPopup, GithubAuthProvider } from "firebase/auth";
 
 const LoginDiv = styled.div`
   padding: 10px;
-  margin-top: 10px;
+  margin-top: 30%;
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -31,8 +31,8 @@ const Login = () => {
   }
 
   return <>
-    <h1>Login page</h1>
     <LoginDiv>
+      <h1>Sign in</h1>
       <div>
         <StyledButton variant="success" onClick={() => signInWithGithub()} disabled={loggingIn}>Sign in with GitHub</StyledButton>
       </div>
