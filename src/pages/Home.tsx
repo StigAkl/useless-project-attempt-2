@@ -3,10 +3,9 @@ import styled from 'styled-components';
 import Button from 'react-bootstrap/Button'
 import { Session } from '../types';
 import { convertMsToTime, dateToTime } from '../helpers/utils';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Watch from '../Components/Watch';
-import { getFirestore, collection, getDocs } from "firebase/firestore";
-import { getActiveSession, updateSession } from '../firebase/firebaseService';
+import { updateSession } from '../firebase/firebaseService';
 
 const StyledDiv = styled.div`
   display: flex;
@@ -80,12 +79,14 @@ const Home = ({ session, setSession, uid }: Props) => {
           </StyledButton>
         </ButtonSpacingTop>
 
-        <div>{sessionSaved ?
-          `Session saved! Duration: ${convertMsToTime(Math.abs(new Date().getTime() - session.startTime.getTime()))}` :
-          <Watch
-            finished={session.finished}
-            startDate={session.startTime} />}
+        <div>{sessionSaved &&
+          `Session saved! Duration: ${convertMsToTime(Math.abs(new Date().getTime() - session.startTime.getTime()))}`
+        }
         </div>
+
+        {!sessionSaved && session.uid !== "" &&
+          <Watch
+            session={session} />}
       </StyledDiv>
     </div>
   )

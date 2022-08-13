@@ -1,8 +1,21 @@
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
+import Button from 'react-bootstrap/Button';
+import styled from 'styled-components';
+import { getAuth, signOut } from "firebase/auth";
+const StyledLogoutButton = styled(Button)`
+  margin-left: 20px;
+`;
 
 export const NavBar = () => {
+
+  const auth: any = getAuth();
+
+  const signOutHandler = () => {
+    signOut(auth);
+  };
+
   return (
     <Navbar bg="primary" variant="dark">
       <Container>
@@ -12,6 +25,7 @@ export const NavBar = () => {
           <Nav.Link href="#home">Home</Nav.Link>
           <Nav.Link href="#logs">Logs</Nav.Link>
           <Nav.Link href="#stats">Statistics</Nav.Link>
+          <StyledLogoutButton variant="light" size="sm" onClick={() => signOutHandler()}>Sign out</StyledLogoutButton>
         </Nav>
       </Container>
     </Navbar >)

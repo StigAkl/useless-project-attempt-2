@@ -60,20 +60,23 @@ const App = () => {
           sess.finished = true;
         }
         setSession(sess);
+        setLoading(false);
+      } else {
+        setLoading(false);
       }
-      setLoading(false);
     }
 
-    auth.onAuthStateChanged((user) => {
+    auth.onAuthStateChanged(async (user) => {
       if (user) {
+        await fetchData(user.uid);
         setUid(user.uid);
-        fetchData(user.uid);
+      } else {
+        setUid("");
+        console.log("Setting loading false else ")
+        setLoading(false);
       }
     })
   }, [auth, firestore]);
-
-  if (!uid && !loading)
-    return <Login />;
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -81,11 +84,15 @@ const App = () => {
       <NavBar />
       <Container>
         <StyledContentDiv>
-          {!loading && (
+
+          {(!uid && !loading) &&
+            <Login />
+          }
+
+          {(!loading && uid) && (
             <BrowserRouter>
               <Routes>
                 <Route index element={<Home session={session} uid={uid} setSession={setSession} />} />
-                <Route path="/login" element={<Login />} />
               </Routes>
             </BrowserRouter>)}
           {loading && (
