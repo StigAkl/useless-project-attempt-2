@@ -3,8 +3,10 @@ import styled from 'styled-components';
 import Button from 'react-bootstrap/Button'
 import { Session } from '../types';
 import { convertMsToTime, dateToTime } from '../helpers/utils';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Watch from '../Components/Watch';
+import { getFirestore, collection, getDocs } from "firebase/firestore";
+import { getActiveSession, updateSession } from '../firebase/firebaseService';
 
 const StyledDiv = styled.div`
   display: flex;
@@ -28,20 +30,22 @@ interface Props {
   uid: string;
 }
 
+
+
 const Home = ({ session, setSession, uid }: Props) => {
 
   const [sessionSaved, setSessionSaved] = useState(false);
-
   const active = !session.finished;
 
-  const stopSessionHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
-    setSession({
+  const stopSessionHandler = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    const saveSession = {
       finished: true,
       startTime: session?.startTime,
-      endTime: undefined,
+      endTime: new Date(),
       uid: uid
-    });
+    };
 
+    await updateSession(saveSession, uid, setSession);
     setSessionSaved(true);
   }
 

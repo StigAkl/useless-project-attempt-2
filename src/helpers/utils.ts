@@ -36,6 +36,17 @@ export const subtractHours = (numOfHours: number, date = new Date()) => {
   return date;
 };
 
+export const addHoursAndMinutse = (
+  hours: number,
+  minutes: number,
+  date = new Date()
+) => {
+  date.setHours(date.getHours() + hours);
+  date.setMinutes(date.getMinutes() + minutes);
+
+  return date;
+};
+
 export const shouldAutoStop = (date: Date) => {
   const defaultLengthInMs = 12 * 60 * 60 * 1000; // 12 hours
 

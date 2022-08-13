@@ -13,8 +13,8 @@ import Login from './pages/Login';
 import { initializeApp } from 'firebase/app';
 import { firebaseConfig } from './firebase/config';
 import { getAuth } from "firebase/auth";
-import { getFirestore, collection, query, where, getDocs } from "firebase/firestore";
-import { shouldAutoStop } from './helpers/utils';
+import { getFirestore, collection, query, where, getDocs, updateDoc } from "firebase/firestore";
+import { addHoursAndMinutse, shouldAutoStop } from './helpers/utils';
 
 const StyledContentDiv = styled.div`
   margin-top: 10%;
@@ -37,44 +37,43 @@ const App = () => {
     endTime: undefined
   });
 
+  useEffect(() => {
+    const fetchData = async (uid: string) => {
+      const activeSessionQuery = query(collection(firestore, "sessions"), where("userId", "==", uid), where("finished", "==", false));
+      const activeSessionSnapshot = await getDocs(activeSessionQuery);
 
-  const fetchData = async (uid: string) => {
-    const q = query(collection(firestore, "sessions"), where("userId", "==", "VHwbLL869ydeJm3aMtQrwp4jSl03"), where("finished", "==", false));
-    const querySnapshot = await getDocs(q);
+      if (activeSessionSnapshot.docs.length === 1) {
+        const sessionData = activeSessionSnapshot.docs[0].data();
+        const sess = {
+          endTime: undefined,
+          finished: false,
+          startTime: sessionData.startTime.toDate(),
+          uid: uid
+        };
 
-    if (querySnapshot.docs.length === 1) {
-      const sessionData = querySnapshot.docs[0].data();
+        if (shouldAutoStop(sessionData.startTime.toDate())) {
+          await updateDoc(activeSessionSnapshot.docs[0].ref, {
+            endTime: addHoursAndMinutse(7, 30, sessionData.startTime.toDate()),
+            finished: true
+          });
 
-      const sess = {
-        endTime: undefined,
-        finished: false,
-        startTime: sessionData.startTime.toDate(),
-        uid: uid
-      };
-
-      if (shouldAutoStop(sessionData.startTime.toDate())) {
-        console.log("Wow that's a long time");
+          sess.finished = true;
+        }
+        setSession(sess);
       }
-      else {
-        console.log("Not even 12 hours!");
-      }
-
-      setSession(sess);
       setLoading(false);
     }
-  }
 
-  useEffect(() => {
     auth.onAuthStateChanged((user) => {
       if (user) {
         setUid(user.uid);
         fetchData(user.uid);
-      } else {
-        console.log("Not authenticated");
       }
     })
+  }, [auth, firestore]);
 
-  }, [setLoading]);
+  if (!uid && !loading)
+    return <Login />;
 
   return (
     <ThemeProvider theme={defaultTheme}>
