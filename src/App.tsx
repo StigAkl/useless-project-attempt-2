@@ -39,7 +39,7 @@ const App = () => {
 
   useEffect(() => {
     const fetchData = async (uid: string) => {
-      const activeSessionQuery = query(collection(firestore, "sessions"), where("userId", "==", uid), where("finished", "==", false));
+      const activeSessionQuery = query(collection(firestore, "sessions"), where("uid", "==", uid), where("finished", "==", false));
       const activeSessionSnapshot = await getDocs(activeSessionQuery);
 
       if (activeSessionSnapshot.docs.length === 1) {

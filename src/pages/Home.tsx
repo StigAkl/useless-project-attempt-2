@@ -6,6 +6,7 @@ import { convertMsToTime, dateToTime } from '../helpers/utils';
 import React, { useState } from 'react';
 import Watch from '../Components/Watch';
 import { newSession, updateSession } from '../firebase/firebaseService';
+import LastSessions from '../Components/LastSessions';
 
 const StyledDiv = styled.div`
   display: flex;
@@ -23,6 +24,7 @@ const StyledButton = styled(Button)`
   font-size: 18px;
   padding: 10px 30px 10px 30px;
 `;
+
 interface Props {
   session: Session;
   setSession(session: Session): void;
@@ -73,7 +75,7 @@ const Home = ({ session, setSession, uid }: Props) => {
   const buttonVariant = active ? "success" : "primary";
   const sessionButtonText = active ? "Stop session" : "Start new session";
   return (
-    <div>
+    <>
       <StyledDiv>
         {heading}
         <ButtonSpacingTop>
@@ -93,7 +95,9 @@ const Home = ({ session, setSession, uid }: Props) => {
           <Watch
             session={session} />}
       </StyledDiv>
-    </div>
+
+      <LastSessions uid={uid} newSession={sessionSaved} />
+    </>
   )
 }
 

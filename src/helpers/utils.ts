@@ -52,3 +52,19 @@ export const shouldAutoStop = (date: Date) => {
   const diff = new Date().getTime() - date.getTime();
   return diff >= defaultLengthInMs;
 };
+
+export const timeDiffToString = (startDate: Date, endDate: Date) => {
+  const diff = endDate.getTime() - startDate.getTime();
+
+  const seconds = Math.floor(diff / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+
+  const secondsRest = seconds % 60;
+  const minutesRest = minutes % 60;
+  const hoursRest = hours % 24;
+
+  return `${padTo2Digits(hoursRest)}:${padTo2Digits(
+    minutesRest
+  )}:${padTo2Digits(secondsRest)}`;
+};

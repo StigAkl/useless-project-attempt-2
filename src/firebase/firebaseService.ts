@@ -8,6 +8,7 @@ import {
   updateDoc,
   where,
   doc,
+  limit,
 } from "firebase/firestore";
 import { Session } from "../types";
 import { firebaseConfig } from "./config";
@@ -39,7 +40,7 @@ export const getActiveSession = async (uid: string) => {
 export const getActiveSessionDocRef = async (uid: string) => {
   const activeSessionQuery = query(
     collection(firestore, COLLECTION),
-    where("userId", "==", uid),
+    where("uid", "==", uid),
     where("finished", "==", false)
   );
   const activeSessionSnapshot = await getDocs(activeSessionQuery);
@@ -87,4 +88,27 @@ export const updateSession = async (
       console.error("Error updating doc: ", e);
     }
   }
+};
+
+export const getLastSessions = async (uid: string) => {
+  const sessions: any = [];
+
+  const snapshot = await getDocs(
+    query(
+      collection(firestore, COLLECTION),
+      where("uid", "==", uid),
+      where("finished", "==", true),
+      limit(10)
+    )
+  );
+
+  snapshot.docs.forEach((d) =>
+    sessions.push({
+      date: d.id,
+      ...d.data(),
+    })
+  );
+
+  console.log(sessions);
+  return sessions;
 };
