@@ -25,7 +25,7 @@ const Login = () => {
     setLoggingIn(true);
     signInWithPopup(auth, new GithubAuthProvider()).then(res => {
     }).catch(err => {
-      console.log("Error:", err);
+      console.error("Error:", err);
       setLoggingIn(false);
     })
   }

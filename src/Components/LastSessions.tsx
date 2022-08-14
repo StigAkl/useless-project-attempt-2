@@ -1,7 +1,8 @@
+import { deleteDoc } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import styled from 'styled-components';
-import { getLastSessions } from '../firebase/firebaseService';
+import { deleteSession, getLastSessions } from '../firebase/firebaseService';
 import { dateToTime, timeDiffToString } from '../helpers/utils';
 
 const StyledContainer = styled.div`
@@ -11,7 +12,6 @@ const StyledContainer = styled.div`
 
 const Items = styled.div`
 display: flex;
-align-items: stretch;
 `;
 
 const Item = styled.div`
@@ -28,6 +28,10 @@ const StyledButton = styled(Button)`
   line-height: 0;
 `;
 
+const StyledNoSessoinsMessage = styled.p`
+  margin-top: 10px;
+`;
+
 interface Props {
   uid: string;
   newSession: boolean;
@@ -36,6 +40,23 @@ interface Props {
 const LastSessions = ({ uid, newSession }: Props) => {
 
   const [sessions, setSessions] = useState<any[]>();
+
+  const handleDeleteSession = async (id: string) => {
+    try {
+
+      // eslint-disable-next-line no-restricted-globals
+      const deleteConfirm: boolean = confirm("Are you sure you want to perform this stupidity?")
+
+      if (deleteConfirm) {
+        await deleteSession(id);
+        const filteredSessions = sessions?.filter(s => s.id !== id);
+        setSessions(filteredSessions);
+      }
+    } catch (error) {
+      console.error("Error deleting doc ", id, error);
+    }
+
+  }
 
   useEffect(() => {
     const getSessions = async () => {
@@ -52,7 +73,7 @@ const LastSessions = ({ uid, newSession }: Props) => {
         <Item>{dateToTime(s.startTime.toDate())}</Item>
         <Item>{dateToTime(s.endTime.toDate())}</Item>
         <Item>{timeDiffToString(s.startTime.toDate(), s.endTime.toDate())}</Item>
-        <Item><StyledButton variant="link" size="sm">X</StyledButton></Item>
+        <Item><StyledButton variant="link" size="sm" onClick={() => handleDeleteSession(s.id)}>X</StyledButton></Item>
       </Items>
     )
   })
@@ -62,14 +83,22 @@ const LastSessions = ({ uid, newSession }: Props) => {
       <hr />
       <h2>Last sessions</h2>
 
-      <Items>
-        <Item>Date</Item>
-        <Item>Check In</Item>
-        <Item>Check Out</Item>
-        <Item>Duration</Item>
-        <Item>Delete</Item>
-      </Items>
-      {sessionsList?.length && sessionsList}
+      {sessions &&
+        sessions.length === 0 &&
+        <StyledNoSessoinsMessage>No sessions :-(</StyledNoSessoinsMessage>}
+
+      {sessions && sessions.length > 0 && (
+        <>
+          <Items>
+            <Item>Date</Item>
+            <Item>Check In</Item>
+            <Item>Check Out</Item>
+            <Item>Duration</Item>
+            <Item>Delete</Item>
+          </Items>
+          {sessionsList}
+        </>
+      )}
     </StyledContainer>
   )
 };

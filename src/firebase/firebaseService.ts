@@ -4,11 +4,13 @@ import {
   getDocs,
   getFirestore,
   query,
-  setDoc,
   updateDoc,
   where,
-  doc,
   limit,
+  addDoc,
+  orderBy,
+  deleteDoc,
+  doc,
 } from "firebase/firestore";
 import { Session } from "../types";
 import { firebaseConfig } from "./config";
@@ -53,9 +55,6 @@ export const getActiveSessionDocRef = async (uid: string) => {
 
 export const newSession = async (uid: string) => {
   const dateNow = new Date();
-  const dateToday = `${dateNow.getDate()}.${
-    dateNow.getMonth() + 1
-  }.${dateNow.getFullYear()}`;
 
   const session: Session = {
     endTime: dateNow,
@@ -64,8 +63,7 @@ export const newSession = async (uid: string) => {
     uid: uid,
   };
 
-  await setDoc(doc(firestore, COLLECTION, dateToday), session);
-
+  await addDoc(collection(firestore, COLLECTION), session);
   return session;
 };
 
@@ -98,17 +96,27 @@ export const getLastSessions = async (uid: string) => {
       collection(firestore, COLLECTION),
       where("uid", "==", uid),
       where("finished", "==", true),
+      orderBy("startTime", "desc"),
       limit(10)
     )
   );
 
-  snapshot.docs.forEach((d) =>
-    sessions.push({
-      date: d.id,
-      ...d.data(),
-    })
-  );
+  snapshot.docs.forEach((d) => {
+    const st = d.data().startTime.toDate();
+    const startDate = `${st.getDate()}.${
+      st.getMonth() + 1
+    }.${st.getFullYear()}`;
 
-  console.log(sessions);
+    sessions.push({
+      date: startDate,
+      id: d.id,
+      ...d.data(),
+    });
+  });
+
   return sessions;
+};
+
+export const deleteSession = async (id: string) => {
+  await deleteDoc(doc(firestore, COLLECTION, id));
 };
