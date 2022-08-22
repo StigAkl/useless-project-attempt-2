@@ -20,7 +20,7 @@ const firestore = getFirestore();
 
 export const COLLECTION = "sessions";
 
-export const getActiveSession = async (uid: string) => {
+const getActiveSession = async (uid: string) => {
   const activeSessionQuery = query(
     collection(firestore, "sessions"),
     where("userId", "==", uid),
@@ -39,7 +39,7 @@ export const getActiveSession = async (uid: string) => {
   return null;
 };
 
-export const getActiveSessionDocRef = async (uid: string) => {
+const getActiveSessionDocRef = async (uid: string) => {
   const activeSessionQuery = query(
     collection(firestore, COLLECTION),
     where("uid", "==", uid),
@@ -53,7 +53,7 @@ export const getActiveSessionDocRef = async (uid: string) => {
   return null;
 };
 
-export const newSession = async (uid: string) => {
+const newSession = async (uid: string) => {
   const dateNow = new Date();
 
   const session: Session = {
@@ -67,7 +67,7 @@ export const newSession = async (uid: string) => {
   return session;
 };
 
-export const updateSession = async (
+const updateActiveSession = async (
   session: Session,
   uid: string,
   callback: any
@@ -88,7 +88,7 @@ export const updateSession = async (
   }
 };
 
-export const getLastSessions = async (uid: string) => {
+const getLastSessions = async (uid: string) => {
   const sessions: any = [];
 
   const snapshot = await getDocs(
@@ -107,9 +107,15 @@ export const getLastSessions = async (uid: string) => {
       st.getMonth() + 1
     }.${st.getFullYear()}`;
 
+    const startDateTime: Date = d.data().startTime.toDate();
+    const endDateTime: Date = d.data().endTime.toDate();
+
     sessions.push({
       date: startDate,
       id: d.id,
+      startTime: startDateTime,
+      endTime: endDateTime,
+      finished: d.data().finished,
       ...d.data(),
     });
   });
@@ -117,6 +123,35 @@ export const getLastSessions = async (uid: string) => {
   return sessions;
 };
 
-export const deleteSession = async (id: string) => {
+const deleteSession = async (id: string) => {
   await deleteDoc(doc(firestore, COLLECTION, id));
 };
+
+const editSession = async (
+  startTime: Date,
+  endTime: Date,
+  sessionId: string
+) => {
+  const ref = doc(firestore, "sessions", sessionId);
+
+  try {
+    await updateDoc(ref, {
+      startTime: startTime,
+      endTime: endTime,
+    });
+  } catch (e) {
+    console.error("Error updating doc: ", e);
+  }
+};
+
+const firebaseService = {
+  deleteSession,
+  getLastSessions,
+  updateActiveSession,
+  newSession,
+  getActiveSessionDocRef,
+  getActiveSession,
+  editSession,
+};
+
+export default firebaseService;

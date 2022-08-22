@@ -5,7 +5,7 @@ import { Session } from '../types';
 import { convertMsToTime, dateToTime } from '../helpers/utils';
 import React, { useState } from 'react';
 import Watch from '../Components/Watch';
-import { newSession, updateSession } from '../firebase/firebaseService';
+import firebaseService from '../firebase/firebaseService';
 import LastSessions from '../Components/LastSessions';
 
 const StyledDiv = styled.div`
@@ -50,7 +50,7 @@ const Home = ({ session, setSession, uid }: Props) => {
     };
 
     const diffInMillis = convertMsToTime(Math.abs(new Date().getTime() - session.startTime.getTime()));
-    await updateSession(saveSession, uid, setSession);
+    await firebaseService.updateActiveSession(saveSession, uid, setSession);
     setStoppedDuration(diffInMillis);
     setActive(false);
     setSessionSaved(true);
@@ -59,7 +59,7 @@ const Home = ({ session, setSession, uid }: Props) => {
 
   const handleStartSession = async (e: React.MouseEvent<HTMLButtonElement>) => {
     setIsLoading(true);
-    const session = await newSession(uid);
+    const session = await firebaseService.newSession(uid);
     setSession(session);
     setActive(true);
     setSessionSaved(false);
