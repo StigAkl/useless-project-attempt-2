@@ -69,7 +69,6 @@ const LastSessions = ({ uid, newSession }: Props) => {
     const getSessions = async () => {
       const sessions = await firebaseService.getLastSessions(uid);
       setSessions(sessions);
-      console.log(sessions);
     }
     getSessions();
   }, [uid, newSession]);
