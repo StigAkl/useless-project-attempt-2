@@ -80,7 +80,7 @@ const Home = ({ session, setSession, uid }: Props) => {
       <StyledDiv>
         {heading}
         <ButtonSpacingTop>
-          <StyledButton disabled={isLoading} variant={buttonVariant} onClick={active ?
+          <StyledButton disabled={isLoading} variant='danger' onClick={active ?
             stopSessionHandler :
             handleStartSession}>
             {sessionButtonText}
