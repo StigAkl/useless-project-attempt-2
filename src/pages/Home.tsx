@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import Watch from '../Components/Watch';
 import firebaseService from '../firebase/firebaseService';
 import LastSessions from '../Components/LastSessions';
+import HoursSummary from '../Components/HoursSummary';
 
 const StyledDiv = styled.div`
   display: flex;
@@ -94,8 +95,9 @@ const Home = ({ session, setSession, uid }: Props) => {
         {!sessionSaved && session.uid !== "" &&
           <Watch
             session={session} />}
-      </StyledDiv>
 
+        <HoursSummary />
+      </StyledDiv>
       <LastSessions uid={uid} newSession={sessionSaved} />
     </>
   )

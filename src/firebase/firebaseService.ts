@@ -88,7 +88,7 @@ const updateActiveSession = async (
   }
 };
 
-const getLastSessions = async (uid: string) => {
+const getLastSessions = async (uid: string, noDays: number = 10) => {
   const sessions: any = [];
 
   const snapshot = await getDocs(
@@ -97,7 +97,7 @@ const getLastSessions = async (uid: string) => {
       where("uid", "==", uid),
       where("finished", "==", true),
       orderBy("startTime", "desc"),
-      limit(10)
+      limit(noDays)
     )
   );
 

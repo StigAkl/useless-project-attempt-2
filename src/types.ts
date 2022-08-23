@@ -4,3 +4,9 @@ export interface Session {
   startTime: Date;
   endTime: Date | undefined | null;
 }
+
+export interface TotalWorkTime {
+  totalMsWorked: number;
+  numDaysWorked: number;
+  totalMsShouldWork: number;
+}

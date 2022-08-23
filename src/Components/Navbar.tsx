@@ -22,11 +22,9 @@ export const NavBar = ({ uid }: Props) => {
   return (
     <Navbar bg="primary" variant="dark">
       <Container>
-        <Navbar.Brand href="#home">Working Hours Tracker</Navbar.Brand>
+        <Navbar.Brand href="#home">WHT</Navbar.Brand>
 
         <Nav className="justify-content-end">
-          <Nav.Link href="#home">Home</Nav.Link>
-          <Nav.Link href="#logs">Logs</Nav.Link>
           <Nav.Link href="#stats">Statistics</Nav.Link>
           {uid &&
             <StyledLogoutButton variant="light" size="sm" onClick={() => signOutHandler()}>

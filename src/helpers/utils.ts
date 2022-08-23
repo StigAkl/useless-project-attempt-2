@@ -1,3 +1,8 @@
+import { TotalWorkTime } from "../types";
+
+//7.5H
+export const TOTAL_MS_WORK_DAY = 27000000;
+
 export const dateToTime = (date: Date) => {
   const timeString =
     ("0" + date.getHours()).slice(-2) +
@@ -23,7 +28,6 @@ export const convertMsToTime = (milliseconds: number) => {
   // 👇️ comment (or remove) the line below
   // commenting next line gets you `24:00:00` instead of `00:00:00`
   // or `36:15:31` instead of `12:15:31`, etc.
-  hours = hours % 24;
 
   return `${padTo2Digits(hours)}:${padTo2Digits(minutes)}:${padTo2Digits(
     seconds
@@ -67,4 +71,21 @@ export const timeDiffToString = (startDate: Date, endDate: Date) => {
   return `${padTo2Digits(hoursRest)}:${padTo2Digits(
     minutesRest
   )}:${padTo2Digits(secondsRest)}`;
+};
+
+export const totalWorkTime = (sessions: any): TotalWorkTime => {
+  let totalMsWorked = 0;
+  let totalDaysWorked = 0;
+  sessions.forEach((s: any) => {
+    totalMsWorked += s.endTime.toDate() - s.startTime.toDate();
+    totalDaysWorked++;
+  });
+
+  let totalMsShouldWork = totalDaysWorked * TOTAL_MS_WORK_DAY;
+
+  return {
+    numDaysWorked: totalDaysWorked,
+    totalMsWorked,
+    totalMsShouldWork,
+  };
 };
