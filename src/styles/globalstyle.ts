@@ -9,7 +9,10 @@ const GlobalStyle = createGlobalStyle<{ theme: IDefaultTheme }>`
 }
 
   body {
-    background-color: ${(props) => props.theme.backgroundColor};
+    background: ${(props) =>
+      `linear-gradient(45deg, ${props.theme.bgGradOne}, ${props.theme.bgGradTwo})`};
+    background-repeat: no-repeat;
+    background-attachment: fixed;
   }
 `;
 

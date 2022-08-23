@@ -11,6 +11,10 @@ const StyledLogoutButton = styled(Button)`
 interface Props {
   uid: string;
 }
+
+const StyledNavbar = styled(Navbar)`
+  background-color: ${props => props.theme.primary};;
+`;
 export const NavBar = ({ uid }: Props) => {
 
   const auth: any = getAuth();
@@ -20,10 +24,9 @@ export const NavBar = ({ uid }: Props) => {
   };
 
   return (
-    <Navbar bg="primary" variant="dark">
+    <StyledNavbar variant="dark">
       <Container>
         <Navbar.Brand href="#home">WHT</Navbar.Brand>
-
         <Nav className="justify-content-end">
           <Nav.Link href="#stats">Statistics</Nav.Link>
           {uid &&
@@ -32,5 +35,5 @@ export const NavBar = ({ uid }: Props) => {
             </StyledLogoutButton>}
         </Nav>
       </Container>
-    </Navbar >)
+    </StyledNavbar >)
 }

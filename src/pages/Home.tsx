@@ -24,6 +24,8 @@ const ButtonSpacingTop = styled.p`
 const StyledButton = styled(Button)`
   font-size: 18px;
   padding: 10px 30px 10px 30px;
+  background-color: ${props => props.theme.primary};
+  border: none;
 `;
 
 interface Props {
@@ -80,7 +82,7 @@ const Home = ({ session, setSession, uid }: Props) => {
       <StyledDiv>
         {heading}
         <ButtonSpacingTop>
-          <StyledButton disabled={isLoading} variant='danger' onClick={active ?
+          <StyledButton disabled={isLoading} onClick={active ?
             stopSessionHandler :
             handleStartSession}>
             {sessionButtonText}

@@ -32,6 +32,10 @@ const StyledNoSessoinsMessage = styled.p`
   margin-top: 10px;
 `;
 
+const StyledEditIcon = styled(BsPencilSquare)`
+  cursor: pointer;
+`;
+
 interface Props {
   uid: string;
   newSession: boolean;
@@ -87,7 +91,7 @@ const LastSessions = ({ uid, newSession }: Props) => {
         <Item>{dateToTime(s.startTime.toDate())}</Item>
         <Item>{dateToTime(s.endTime.toDate())}</Item>
         <Item>{timeDiffToString(s.startTime.toDate(), s.endTime.toDate())}</Item>
-        <Item><BsPencilSquare color="blue" onClick={() => handleEditSession(s.id)} size={20} /></Item>
+        <Item><StyledEditIcon color="blue" onClick={() => handleEditSession(s.id)} size={20} /></Item>
         <Item><StyledButton variant="link" size="sm" onClick={() => handleDeleteSession(s.id)}>X</StyledButton></Item>
       </Items>
     )
