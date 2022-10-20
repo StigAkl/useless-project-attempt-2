@@ -7,7 +7,7 @@ export interface IDefaultTheme {
 }
 
 export const defaultTheme: IDefaultTheme = {
-  bgGradOne: "#eb97f0",
+  bgGradOne: "#ff0000",
   bgGradTwo: "#eed3f0",
   primary: "#bc3ac3",
   pink: "#d140d6",
